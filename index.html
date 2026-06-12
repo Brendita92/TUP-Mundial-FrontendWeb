@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mundial FIFA 2026 - Partidos</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="icon" type="image/x-icon" href="img/logo.ico" />
+  </head>
+  <body>
+    <header>
+      <div class="banner-content">
+        <img src="img/logo.jpg" alt="Logo Mundial 2026" class="logo" />
+        <div class="banner-text">
+          <h1>Gestión de Entradas - Mundial 2026</h1>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-title">
+        <h2>Listado de partidos</h2>
+      </section>
+      <div class="buscador-filtros">
+        <div class="buscador-container">
+          <input type="text" id="buscador" placeholder="Buscar partido..." />
+          <i class="fa fa-search icono-lupa"></i>
+        </div>
+
+        <div class="filtros">
+          <select id="filtro-fecha">
+            <option value="">Todas las fechas</option>
+            <option value="2026-06-11">11 Junio</option>
+            <option value="2026-06-12">12 Junio</option>
+          </select>
+
+          <select id="filtro-equipo">
+            <option value="">Todos los equipos</option>
+          </select>
+        </div>
+      </div>
+
+      <section id="partidos"></section>
+    </main>
+
+    <script src="js/datos.js"></script>
+    <script src="js/partidos.js"></script>
+    
+    <div class="foot">
+      <footer>Copyright &copy; 2026</footer>
+    </div>
+  </body>
+</html>
