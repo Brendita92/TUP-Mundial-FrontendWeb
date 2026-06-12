@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro - Mundial 2026</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/x-icon" href="img/logo.ico" />
+  </head>
+  <body>
+    <header class="simple-header">
+      <h1>Registro para Comprar</h1>
+    </header>
+
+    <main>
+      <section class="card form-card">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" placeholder="Ingrese su nombre" />
+
+        <label for="mail">Correo</label>
+        <input type="email" id="mail" placeholder="Ingrese su correo" />
+
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="Ingrese su contraseña" />
+
+        <div class="acciones form-actions">
+          <button id="btnLogin" class="primary-button">Registrarse</button>
+          <button class="btn-gray" onclick="window.location.href='index.html'">Volver</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="foot">
+      <footer>Copyright &copy; 2026</footer>
+    </div>
+
+    <script src="js/datos.js"></script>
+    <script src="js/login.js"></script>
+  </body>
+</html>

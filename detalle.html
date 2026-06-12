@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle Partido - Mundial 2026</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/x-icon" href="img/logo.ico" />
+  </head>
+  <body>
+    <header class="simple-header">
+      <h1>Detalle del Partido</h1>
+    </header>
+
+    <main>
+      <section id="detalle-partido"></section>
+
+      <section class="mapa-section">
+        <h2 class="mapa-titulo">Seleccioná tu sector</h2>
+        <p class="mapa-instruccion">
+          Pasá el mouse sobre las tribunas para ver el detalle. Hacé click para seleccionar.
+        </p>
+
+        <div class="mapa-layout">
+          <div id="mapa-estadio" class="mapa-contenedor"></div>
+          <div id="info-sector" class="mapa-panel"></div>
+        </div>
+
+        <div id="mapa-leyenda" class="mapa-leyenda"></div>
+      </section>
+
+      <div class="acciones">
+        <button id="btnComprar" class="primary-button">Comprar Entrada</button>
+        <button class="btn-gray" onclick="window.location.href='index.html'">Volver</button>
+      </div>
+    </main>
+
+    <div class="foot">
+      <footer>Copyright &copy; 2026</footer>
+    </div>
+
+    <script src="js/datos.js"></script>
+    <script src="js/detalle.js"></script>
+  </body>
+</html>
+
