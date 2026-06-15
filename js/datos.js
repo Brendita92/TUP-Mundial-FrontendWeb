@@ -1,4 +1,4 @@
-//const API_URL = "https://localhost:7103/api"; // Ajusta según tu backend
+const API_URL = "https://localhost:7103/api"; // ajusta según tu backend
 
 // Código FIFA (nombre del SVG) ↔ nombre del equipo en español
 const CODIGOS_EQUIPOS = {
@@ -179,57 +179,63 @@ function obtenerEquiposParaFiltro() {
     .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
 }
 
-// DEMO
-const PARTIDOS_DEMO = [
-  {
-    id: 1,
-    fecha: "2026-06-11",
-    hora: "20:00",
-    local: { nombre: "Argentina" },
-    visitante: { nombre: "Brasil" },
-    estadio: { nombre: "Estadio Azteca", ciudad: "Ciudad de Mexico" }
-  },
-  {
-    id: 2,
-    fecha: "2026-06-12",
-    hora: "18:00",
-    local: { nombre: "Espana" },
-    visitante: { nombre: "Francia" },
-    estadio: { nombre: "MetLife Stadium", ciudad: "New Jersey" }
-  }
-];
-
-// Función maestra para API
-// async function apiFetch(endpoint) {
-//   try {
-//     const response = await fetch(`${API_URL}${endpoint}`);
-//     if (!response.ok) throw new Error("Error en la respuesta");
-//     return await response.json();
-//   } catch (error) {
-//     console.error("Error al conectar con la API:", error);
-//     return null; // fallback
+// // DEMO
+// const PARTIDOS_DEMO = [
+//   {
+//     id: 1,
+//     fecha: "2026-06-11",
+//     hora: "20:00",
+//     local: { nombre: "Argentina" },
+//     visitante: { nombre: "Brasil" },
+//     estadio: { nombre: "Estadio Azteca", ciudad: "Ciudad de Mexico" }
+//   },
+//   {
+//     id: 2,
+//     fecha: "2026-06-12",
+//     hora: "18:00",
+//     local: { nombre: "Espana" },
+//     visitante: { nombre: "Francia" },
+//     estadio: { nombre: "MetLife Stadium", ciudad: "New Jersey" }
 //   }
+// ];
+
+//Función maestra para API
+async function apiFetch(endpoint) {
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`);
+    if (!response.ok) throw new Error("Error en la respuesta");
+    return await response.json();
+  } catch (error) {
+    console.error("Error al conectar con la API:", error);
+    return null; // fallback
+  }
+}
+
+// function obtenerPartidosDemo() {
+//   return PARTIDOS_DEMO;
 // }
 
-function obtenerPartidosDemo() {
-  return PARTIDOS_DEMO;
-}
+// Autocalls removidos: la carga se hace desde `js/partidos.js` y `js/detalle.js`
+
+
 
 function formatearFecha(fecha) {
   return new Date(fecha).toLocaleDateString("es-AR");
 }
 
 function nombrePartido(partido) {
-  const local = partido.local?.nombre || "Local";
-  const visitante = partido.visitante?.nombre || "Visitante";
+  const local = partido.local || "Local";
+  const visitante = partido.visitante || "Visitante";
   return `${local} vs ${visitante}`;
 }
 
+
 function buscarPartidoDemo(id) {
-  return PARTIDOS_DEMO.find(p => p.id == id);
+  return null;
 }
 
 const SECTORES_DEMO = [
+
   {
     id: "popular",
     nombre: "Popular",
@@ -271,46 +277,76 @@ function mostrarPartidos(partidos, contenedor) {
   partidos.forEach(p => {
     const card = document.createElement("div");
     card.className = "card partido-card";
-    const idSeguro = p.id || p.idPartido;
+    const idSeguro = p.id;
 
-    const logoLocal = obtenerLogoEquipo(p.local.nombre);
-    const logoVisitante = obtenerLogoEquipo(p.visitante.nombre);
+    const logoLocal = obtenerLogoEquipo(p.local);
+    const logoVisitante = obtenerLogoEquipo(p.visitante);
 
     card.innerHTML = `
       <div class="equipos">
-        <img src="${logoLocal}" alt="${p.local.nombre}" class="logo-equipo">
+        <img src="${logoLocal}" alt="${p.local}" class="logo-equipo">
         <span>vs</span>
-        <img src="${logoVisitante}" alt="${p.visitante.nombre}" class="logo-equipo">
+        <img src="${logoVisitante}" alt="${p.visitante}" class="logo-equipo">
       </div>
       <h3>${nombrePartido(p)}</h3>
       <p>${formatearFecha(p.fecha)} - ${p.hora}</p>
-      <p>${p.estadio?.nombre ?? "Sin Estadio"}</p>
+      <p>${p.estadio ?? "Sin Estadio"}</p>
       <a class="button-link" href="detalle.html?id=${idSeguro}">Comprar Entradas</a>
     `;
     contenedor.appendChild(card);
   });
 }
 
+
 function mostrarDetalle(partido, contenedor) {
   if (!partido) return;
 
-  localStorage.setItem("partidoActual", JSON.stringify(partido));
+  //localStorage.setItem("partidoActual", JSON.stringify(partido));
 
-  const logoLocal = obtenerLogoEquipo(partido.local.nombre);
-  const logoVisitante = obtenerLogoEquipo(partido.visitante.nombre);
+  const logoLocal = obtenerLogoEquipo(partido.local);
+  const logoVisitante = obtenerLogoEquipo(partido.visitante);
 
-  contenedor.innerHTML = `
+
+//   contenedor.innerHTML = `
+//     <div class="detalle-card">
+//       <div class="equipos">
+//         <img src="${logoLocal}" alt="${partido.local.nombre}" class="logo-equipo">
+//         <span>vs</span>
+//         <img src="${logoVisitante}" alt="${partido.visitante.nombre}" class="logo-equipo">
+//       </div>
+//       <h2>${nombrePartido(partido)}</h2>
+//       <p>Fecha: ${formatearFecha(partido.fecha)}</p>
+//       <p>Hora: ${partido.hora}</p>
+//       <p>Estadio: ${partido.estadio?.nombre}</p>
+//       <p>Ciudad: ${partido.estadio?.ciudad}</p>
+//     </div>
+//   `;
+// }
+contenedor.innerHTML = `
     <div class="detalle-card">
+
       <div class="equipos">
-        <img src="${logoLocal}" alt="${partido.local.nombre}" class="logo-equipo">
+        <img src="${logoLocal}" alt="${partido.local}" class="logo-equipo">
+
         <span>vs</span>
-        <img src="${logoVisitante}" alt="${partido.visitante.nombre}" class="logo-equipo">
+
+        <img src="${logoVisitante}" alt="${partido.visitante}" class="logo-equipo">
       </div>
-      <h2>${nombrePartido(partido)}</h2>
-      <p>Fecha: ${formatearFecha(partido.fecha)}</p>
-      <p>Hora: ${partido.hora}</p>
-      <p>Estadio: ${partido.estadio?.nombre}</p>
-      <p>Ciudad: ${partido.estadio?.ciudad}</p>
+
+      <h2>${partido.local} vs ${partido.visitante}</h2>
+
+      <p><strong>Fecha:</strong> ${formatearFecha(partido.fecha)}</p>
+
+      <p><strong>Hora:</strong> ${partido.hora}</p>
+
+      <p><strong>Torneo:</strong> ${partido.torneo}</p>
+
+      <p><strong>Fase:</strong> ${partido.fase}</p>
+
+      <p><strong>Estadio:</strong> ${partido.estadio}</p>
+
+      <p><strong>Zona Horaria:</strong> ${partido.zonaHoraria}</p>
+
     </div>
   `;
 }
