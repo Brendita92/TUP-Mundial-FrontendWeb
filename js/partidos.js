@@ -5,15 +5,43 @@ const filtroEquipo = document.getElementById("filtro-equipo");
 
 let partidosGlobal = [];
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   cargarFiltroEquipos();
-  partidosGlobal = obtenerPartidosDemo();
-  mostrarPartidos(partidosGlobal, contenedor);
+
+  // Cargar partidos desde API
+  try {
+    const res = await apiFetch("/Partido/obtenertodos");
+    partidosGlobal = res || [];
+
+    // Debug visible (para detectar por qué queda vacío)
+    console.log("[Partidos] response:", res);
+
+    if (!Array.isArray(partidosGlobal) || partidosGlobal.length === 0) {
+      contenedor.innerHTML = `
+        <div class="empty-state">
+          <p>No hay partidos para mostrar.</p>
+        </div>
+      `;
+      return;
+    }
+
+    mostrarPartidos(partidosGlobal, contenedor);
+  } catch (e) {
+    console.error("[Partidos] Error cargando partidos:", e);
+    contenedor.innerHTML = `
+      <div class="empty-state">
+        <p>Error al cargar partidos.</p>
+        <small>Revisá consola.</small>
+      </div>
+    `;
+  }
+
 
   buscador.addEventListener("input", aplicarFiltros);
   filtroFecha.addEventListener("change", aplicarFiltros);
   filtroEquipo.addEventListener("change", aplicarFiltros);
 });
+
 
 function cargarFiltroEquipos() {
   obtenerEquiposParaFiltro().forEach(({ codigo, nombre }) => {
@@ -32,12 +60,14 @@ function aplicarFiltros() {
   const filtrados = partidosGlobal.filter(p => {
     const coincideBuscador =
       nombrePartido(p).toLowerCase().includes(texto) ||
-      (p.estadio?.nombre ?? "").toLowerCase().includes(texto);
+      (p.estadio ?? "").toLowerCase().includes(texto);
+
 
     const coincideFecha = !fechaSeleccionada || p.fecha === fechaSeleccionada;
 
-    const codigoLocal = obtenerCodigoEquipo(p.local.nombre);
-    const codigoVisitante = obtenerCodigoEquipo(p.visitante.nombre);
+    const codigoLocal = obtenerCodigoEquipo(p.local);
+    const codigoVisitante = obtenerCodigoEquipo(p.visitante);
+
     const coincideEquipo = !equipoSeleccionado ||
       codigoLocal === equipoSeleccionado ||
       codigoVisitante === equipoSeleccionado;

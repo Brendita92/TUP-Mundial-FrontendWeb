@@ -219,13 +219,15 @@ function restaurarSectorGuardado() {
 renderMapa();
 restaurarSectorGuardado();
 
-window.addEventListener("DOMContentLoaded", () => {
-  const partido = buscarPartidoDemo(idPartido);
+window.addEventListener("DOMContentLoaded", async () => {
+  const partido = await apiFetch(`/Partido/${idPartido}`);
 
   if (partido && contenedorDetalle) {
     mostrarDetalle(partido, contenedorDetalle);
+    localStorage.setItem("partidoActual", JSON.stringify(partido));
   }
 });
+
 
 btnComprar.addEventListener("click", () => {
   if (!sectorActivo) {

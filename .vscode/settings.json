@@ -1,0 +1,4 @@
+// configuracion de liveServer para usar chrome
+{
+    "liveServer.settings.port": 5501
+}
