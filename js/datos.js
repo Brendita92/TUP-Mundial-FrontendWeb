@@ -179,27 +179,34 @@ function obtenerEquiposParaFiltro() {
     .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
 }
 
-// // DEMO
-// const PARTIDOS_DEMO = [
-//   {
-//     id: 1,
-//     fecha: "2026-06-11",
-//     hora: "20:00",
-//     local: { nombre: "Argentina" },
-//     visitante: { nombre: "Brasil" },
-//     estadio: { nombre: "Estadio Azteca", ciudad: "Ciudad de Mexico" }
-//   },
-//   {
-//     id: 2,
-//     fecha: "2026-06-12",
-//     hora: "18:00",
-//     local: { nombre: "Espana" },
-//     visitante: { nombre: "Francia" },
-//     estadio: { nombre: "MetLife Stadium", ciudad: "New Jersey" }
-//   }
-// ];
 
-//Función maestra para API
+function mostrarToast(tipo, mensaje) {
+  const toastId = "toast-mundial";
+  const existente = document.getElementById(toastId);
+  if (existente) existente.remove();
+
+  const toast = document.createElement("div");
+  toast.id = toastId;
+  toast.textContent = mensaje;
+  toast.style.position = "fixed";
+  toast.style.left = "50%";
+  toast.style.transform = "translateX(-50%)";
+  toast.style.bottom = "20px";
+  toast.style.background = tipo === "error" ? "#dc2626" : "#047857";
+  toast.style.color = "#fff";
+  toast.style.padding = "12px 18px";
+  toast.style.borderRadius = "12px";
+  toast.style.fontWeight = "700";
+  toast.style.zIndex = "10000";
+  toast.style.boxShadow = "0 10px 24px rgba(0,0,0,0.25)";
+  toast.style.maxWidth = "90vw";
+  toast.style.textAlign = "center";
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 3500);
+}
+
+// Función maestra para API
 async function apiFetch(endpoint) {
   try {
     const response = await fetch(`${API_URL}${endpoint}`);
@@ -207,16 +214,22 @@ async function apiFetch(endpoint) {
     return await response.json();
   } catch (error) {
     console.error("Error al conectar con la API:", error);
-    return null; // fallback
+    return []; // fallback
   }
 }
 
-// function obtenerPartidosDemo() {
-//   return PARTIDOS_DEMO;
-// }
+async function apiFetchAuth(endpoint, options = {}) {
+  const token = localStorage.getItem("jwt_token");
+  const headers = {
+    ...(options.headers || {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 
-// Autocalls removidos: la carga se hace desde `js/partidos.js` y `js/detalle.js`
-
+  return fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+}
 
 
 function formatearFecha(fecha) {
@@ -307,21 +320,6 @@ function mostrarDetalle(partido, contenedor) {
   const logoVisitante = obtenerLogoEquipo(partido.visitante);
 
 
-//   contenedor.innerHTML = `
-//     <div class="detalle-card">
-//       <div class="equipos">
-//         <img src="${logoLocal}" alt="${partido.local.nombre}" class="logo-equipo">
-//         <span>vs</span>
-//         <img src="${logoVisitante}" alt="${partido.visitante.nombre}" class="logo-equipo">
-//       </div>
-//       <h2>${nombrePartido(partido)}</h2>
-//       <p>Fecha: ${formatearFecha(partido.fecha)}</p>
-//       <p>Hora: ${partido.hora}</p>
-//       <p>Estadio: ${partido.estadio?.nombre}</p>
-//       <p>Ciudad: ${partido.estadio?.ciudad}</p>
-//     </div>
-//   `;
-// }
 contenedor.innerHTML = `
     <div class="detalle-card">
 
@@ -372,4 +370,39 @@ function calcularTotal(sectorSelector, cantidadInput, totalElem) {
   const precio = Number(sector.dataset.precio);
   totalElem.textContent = "$" + (precio * Number(cantidadInput.value));
 }
+
+function obtenerRoles() {
+  try {
+    const raw = localStorage.getItem("roles");
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function esAdmin() {
+  return obtenerRoles().includes("Administrador");
+}
+
+function esUsuario() {
+  return obtenerRoles().includes("Usuario");
+}
+
+function requireAdminOrRedirect() {
+  if (!esAdmin()) {
+    alert("Acceso denegado");
+    window.location.href = "index.html";
+    return false;
+  }
+  return true;
+}
+
+window.mostrarToast = mostrarToast;
+window.apiFetchAuth = apiFetchAuth;
+window.obtenerRoles = obtenerRoles;
+window.esAdmin = esAdmin;
+window.esUsuario = esUsuario;
+window.requireAdminOrRedirect = requireAdminOrRedirect;
 
