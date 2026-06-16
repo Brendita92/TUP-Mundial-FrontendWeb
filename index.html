@@ -35,12 +35,9 @@
           <i class="fa fa-search icono-lupa"></i>
         </div>
 
-        <div class="filtros">
-          <select id="filtro-fecha">
-            <option value="">Todas las fechas</option>
-            <option value="2026-06-11">11 Junio</option>
-            <option value="2026-06-12">12 Junio</option>
-          </select>
+        <select id="filtro-fecha">
+          <option value="">Todas las fechas</option>
+        </select>
 
           <select id="filtro-equipo">
             <option value="">Todos los equipos</option>
@@ -49,7 +46,35 @@
       </div>
 
       <section id="partidos"></section>
+<button id="btnSidebar" class="btn-sidebar">
+  ☰ Menú
+</button>
+
+<aside id="sidebar" class="sidebar">
+
+  <div class="sidebar-section">
+    <button class="sidebar-title">Torneos</button>
+    <div id="sidebar-torneos" class="sidebar-content"></div>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="sidebar-title">Fases</button>
+    <div id="sidebar-fases" class="sidebar-content"></div>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="sidebar-title">Estadios</button>
+    <div id="sidebar-estadios" class="sidebar-content"></div>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="sidebar-title">Selecciones</button>
+    <div id="sidebar-selecciones" class="sidebar-content"></div>
+  </div>
+
+</aside>
     </main>
+    
 
     <script src="js/datos.js"></script>
     <script src="js/partidos.js"></script>

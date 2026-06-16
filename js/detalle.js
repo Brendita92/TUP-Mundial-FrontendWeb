@@ -4,6 +4,7 @@ const btnComprar = document.getElementById("btnComprar");
 const contenedorMapa = document.getElementById("mapa-estadio");
 const infoSector = document.getElementById("info-sector");
 const leyendaMapa = document.getElementById("mapa-leyenda");
+const mapaSection = document.querySelector(".mapa-section");
 
 const sectores = obtenerSectoresDemo();
 let sectorActivo = null;
@@ -203,6 +204,11 @@ function seleccionarSector(sector) {
   localStorage.setItem("sectorSeleccionado", JSON.stringify(sector));
   actualizarClasesMapa();
   mostrarInfo(sector, false);
+
+  const acciones = document.querySelector(".acciones");
+  if (acciones) {
+    acciones.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 function restaurarSectorGuardado() {
@@ -220,6 +226,11 @@ renderMapa();
 restaurarSectorGuardado();
 
 window.addEventListener("DOMContentLoaded", async () => {
+  if (mapaSection) {
+    setTimeout(() => {
+      mapaSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 120);
+  }
   const partido = await apiFetch(`/Partido/${idPartido}`);
 
   if (partido && contenedorDetalle) {
