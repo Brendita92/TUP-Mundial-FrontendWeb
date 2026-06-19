@@ -37,22 +37,35 @@
           />
         </div>
 
-              <div class="acciones form-actions">
-              <button id="btnLogin" class="primary-button">
-                Registrarse
-              </button>
+        <label for="confirmPassword" id="confirmPasswordLabel">
+          Confirmar contraseña
+        </label>
+        <div class="password-wrapper" id="confirmPasswordWrapper">
+          <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirme su contraseña"
+          />
+        </div>
 
-          <button
-            type="button"
-            id="btnModoLogin"
-            class="btn-gray"
-          >
+        <button
+          type="button"
+          id="btnForgotPassword"
+          class="forgot-password-link hidden"
+        >
+          ¿Olvidaste tu contraseña?
+        </button>
+
+        <div class="acciones form-actions">
+          <button id="btnLogin" class="primary-button">Registrarse</button>
+
+          <button type="button" id="btnModoLogin" class="btn-gray">
             Ya tengo cuenta
           </button>
 
           <button
             class="btn-gray"
-            onclick="window.location.href='index.html'"
+            onclick="window.location.href = 'index.html'"
           >
             Volver
           </button>

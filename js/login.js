@@ -6,13 +6,14 @@ function getValue(id) {
   return el ? el.value.trim() : "";
 }
 
-async function authRegistrar({ nombre, apellido, mail, contrasena }) {
-  // RegistroRequestDto: (string Nombre, string Apellido, string Email, string Password)
+async function authRegistrar({ nombre, apellido, mail, contrasena, confirmPassword }) {
+
   const registroRequest = {
     nombre,
     apellido,
     email: mail,
     password: contrasena,
+    confirmPassword,
   };
   
   const responseRegistro = await fetch(`${API_URL}/auth/registrar`, {
@@ -87,6 +88,11 @@ function setupLoginFlow() {
     return txt.includes("registr");
   };
 
+  const confirmPasswordEl = document.getElementById("confirmPassword");
+  const confirmPasswordLabel = document.getElementById("confirmPasswordLabel");
+  const confirmPasswordWrapper = document.getElementById("confirmPasswordWrapper");
+  const btnForgotPassword = document.getElementById("btnForgotPassword");
+
   const setModoLogin = () => {
     btnLogin.textContent = "Ingresar";
     if (btnModoLogin) btnModoLogin.style.display = "none";
@@ -111,6 +117,12 @@ function setupLoginFlow() {
       if (labelNombre) labelNombre.style.display = "none";
       if (labelApellido) labelApellido.style.display = "none";
 
+      if (confirmPasswordLabel) confirmPasswordLabel.style.display = "none";
+      if (confirmPasswordWrapper) confirmPasswordWrapper.style.display = "none";
+      if (confirmPasswordEl) confirmPasswordEl.value = "";
+
+      if (btnForgotPassword) btnForgotPassword.classList.remove("hidden");
+
     // Mensaje de bienvenida debajo del título (si existe contenedor).
     const card = document.querySelector(".form-card");
     if (card) {
@@ -118,12 +130,7 @@ function setupLoginFlow() {
       if (!msg) {
         msg = document.createElement("div");
         msg.id = "authMensaje";
-        msg.style.margin = "0.75rem 0 0";
-        msg.style.padding = "0.75rem";
-        msg.style.borderRadius = "10px";
-        msg.style.background = "#ecfdf5";
-        msg.style.color = "#047857";
-        msg.style.fontWeight = "700";
+        msg.classList.add("auth-mensaje");
         card.appendChild(msg);
       }
      msg.textContent =
@@ -142,15 +149,27 @@ function setupLoginFlow() {
     const apellido = getValue("apellido");
     const mail = getValue("mail");
     const contrasena = getValue("password");
+    const confirmPassword = getValue("confirmPassword");
 
     try {
       if (isRegistroMode()) {
-        if (!nombre || !apellido || !mail || !contrasena) {
-          toast("error", "Complete nombre, apellido, correo y contraseña");
+        if (!nombre || !apellido || !mail || !contrasena || !confirmPassword) {
+          toast("error", "Complete nombre, apellido, correo, contraseña y confirmar contraseña");
           return;
         }
 
-        const dataRegistro = await authRegistrar({ nombre, apellido, mail, contrasena });
+        if (contrasena !== confirmPassword) {
+          toast("error", "Las contraseñas no coinciden. Verificá e intentá nuevamente.");
+          return;
+        }
+
+        const dataRegistro = await authRegistrar({
+          nombre,
+          apellido,
+          mail,
+          contrasena,
+          confirmPassword,
+        });
         // Guardamos mail para autocompletar después del cambio de modo.
         localStorage.setItem("auth_mail", mail);
 
@@ -193,56 +212,65 @@ function setupLoginFlow() {
   });
 }
 
-function initPasswordToggle() {
-  const input = document.getElementById("password");
+function createPasswordToggle(inputId, buttonId, ariaLabel) {
+  const input = document.getElementById(inputId);
   if (!input) return;
 
-  let wrapper = input.parentElement;
+  const wrapper = input.parentElement;
   if (!wrapper) return;
 
-  // Creamos un botón ojo dentro del wrapper si no existe.
-  const existing = document.getElementById("togglePassword");
+  const existing = document.getElementById(buttonId);
   if (existing) return;
 
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.id = "togglePassword";
-  btn.setAttribute("aria-label", "Mostrar/Ocultar contraseña");
+  btn.id = buttonId;
+  btn.setAttribute("aria-label", ariaLabel);
   btn.innerHTML = "\u{1F441}"; // 👁
-  btn.style.position = "absolute";
-  btn.style.right = "12px";
-  btn.style.top = "50%";
-  btn.style.transform = "translateY(-50%)";
-  btn.style.border = "none";
-  btn.style.background = "transparent";
-  btn.style.cursor = "pointer";
-  btn.style.fontSize = "1.1rem";
+  btn.classList.add("password-toggle-btn");
 
-  wrapper.style.position = "relative";
+  wrapper.classList.add("password-wrapper");
   wrapper.appendChild(btn);
 
   btn.addEventListener("click", () => {
     const isHidden = input.type === "password";
     input.type = isHidden ? "text" : "password";
-    btn.innerHTML = isHidden ? "\u{1F441}" : "\u{1F576}"; // ojo vs ojo tachado (aprox)
+    btn.innerHTML = isHidden ? "\u{1F441}" : "\u{1F576}";
   });
+}
+
+function initPasswordToggle() {
+  createPasswordToggle("password", "togglePassword", "Mostrar/Ocultar contraseña");
+  createPasswordToggle(
+    "confirmPassword",
+    "toggleConfirmPassword",
+    "Mostrar/Ocultar confirmar contraseña"
+  );
 }
 
 
 if (btnModoLogin) {
   btnModoLogin.addEventListener("click", () => {
-
     const nombreInput = document.getElementById("nombre");
     const apellidoInput = document.getElementById("apellido");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const confirmPasswordLabel = document.getElementById("confirmPasswordLabel");
+    const confirmPasswordWrapper = document.getElementById("confirmPasswordWrapper");
+    const forgotButton = document.getElementById("btnForgotPassword");
 
     const labelNombre = document.querySelector('label[for="nombre"]');
     const labelApellido = document.querySelector('label[for="apellido"]');
 
     if (nombreInput) nombreInput.style.display = "none";
     if (apellidoInput) apellidoInput.style.display = "none";
+    if (confirmPasswordInput) confirmPasswordInput.value = "";
 
     if (labelNombre) labelNombre.style.display = "none";
     if (labelApellido) labelApellido.style.display = "none";
+    if (confirmPasswordLabel) confirmPasswordLabel.style.display = "none";
+    if (confirmPasswordWrapper) confirmPasswordWrapper.style.display = "none";
+
+    if (forgotButton) forgotButton.classList.remove("hidden");
 
     const titulo = document.querySelector("header h1");
 
@@ -255,6 +283,14 @@ if (btnModoLogin) {
   });
 }
 
+
+const btnForgotPassword = document.getElementById("btnForgotPassword");
+if (btnForgotPassword) {
+  btnForgotPassword.addEventListener("click", () => {
+    // TODO: Integrar endpoint real de recuperación cuando esté disponible en backend.
+    window.location.href = "recuperar-password.html";
+  });
+}
 
 setupLoginFlow();
 initPasswordToggle();

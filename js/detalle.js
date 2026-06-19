@@ -247,5 +247,7 @@ btnComprar.addEventListener("click", () => {
   }
 
   localStorage.setItem("partidoPendiente", idPartido);
+
+  // Requerimiento actual: siempre pasar por login/registro luego de elegir sector.
   window.location.href = "login.html";
 });
