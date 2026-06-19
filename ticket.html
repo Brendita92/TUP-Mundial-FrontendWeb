@@ -1,62 +1,61 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ticket - Mundial 2026</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ticket - Mundial 2026</title>
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" type="image/x-icon" href="img/logo.ico">
-</head>
-<body>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/x-icon" href="img/logo.ico" />
+  </head>
+  <body>
+    <header class="simple-header">
+      <h1>Ticket de Compra</h1>
+    </header>
 
-  <header class="simple-header">
-    <h1>Ticket de Compra</h1>
-  </header>
+    <main>
+      <section class="ticket-card">
+        <div class="ticket-header">
+          <img src="img/logo.jpg" alt="Mundial 2026" />
+          <h2>Mundial FIFA 2026</h2>
+        </div>
 
-  <main>
+        <div id="ticket-info">
+        //Se carga desde JS 
+        </div>
 
-    <section class="ticket-card">
+        <div class="ticket-footer">
+          <p>Presentar este ticket al ingresar al estadio.</p>
+        </div>
+      </section>
 
-      <div class="ticket-header">
-        <img src="img/logo.jpg" alt="Mundial 2026">
-        <h2>Mundial FIFA 2026</h2>
+      <div class="acciones">
+        <button class="primary-button" onclick="window.print()">
+          Imprimir Ticket
+        </button>
+
+        <button
+          class="primary-button"
+          onclick="window.location.href = 'mis-entradas.html'"
+        >
+          Ver Mi Entrada
+        </button>
+
+        <button class="btn-gray" onclick="window.location.href = 'index.html'">
+          Seguir Comprando
+        </button>
+
+        <button class="btn-gray" onclick="window.location.href = 'index.html'">
+          Volver al Inicio
+        </button>
       </div>
+    </main>
 
-      <div id="ticket-info">
-        <!-- Se carga desde JS -->
-      </div>
-
-      <div class="ticket-footer">
-        <p>Presentar este ticket al ingresar al estadio.</p>
-      </div>
-
-    </section>
-
-    <div class="acciones">
-      <button
-        class="primary-button"
-        onclick="window.print()"
-      >
-        Imprimir Ticket
-      </button>
-
-      <button
-        class="btn-gray"
-        onclick="window.location.href='index.html'"
-      >
-        Volver al Inicio
-      </button>
-    </div>
-
-  </main>
-
-  <script src="js/ticket.js"></script>
-
-</body>
+    <script src="js/ticket.js"></script>
+  </body>
 </html>
