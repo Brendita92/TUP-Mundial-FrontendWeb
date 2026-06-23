@@ -352,11 +352,19 @@ contenedor.innerHTML = `
 function mostrarPartidoCompra(partido, contenedor) {
   if (!partido) return;
 
+  const logoLocal = obtenerLogoEquipo(partido.local);
+  const logoVisitante = obtenerLogoEquipo(partido.visitante);
+
   contenedor.innerHTML = `
     <div class="detalle-card">
+      <div class="equipos">
+        <img src="${logoLocal}" alt="${partido.local}" class="logo-equipo">
+        <span>vs</span>
+        <img src="${logoVisitante}" alt="${partido.visitante}" class="logo-equipo">
+      </div>
       <h2>${nombrePartido(partido)}</h2>
       <p>${formatearFecha(partido.fecha)} - ${partido.hora}</p>
-      <p>${partido.estadio?.nombre}</p>
+      <p>${partido.estadio?.nombre || partido.estadio || "Sin estadio"}</p>
     </div>
   `;
 }

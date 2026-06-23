@@ -8,6 +8,16 @@ const total = document.getElementById("total");
 const btnContinuar = document.getElementById("btnContinuar");
 const cantidadInput = document.getElementById("cantidad");
 const cantidadError = document.getElementById("cantidad-error");
+const tarjetaForm = document.getElementById("tarjeta-form");
+const tarjetaError = document.getElementById("tarjeta-error");
+const btnConfirmarTarjeta = document.getElementById("btnConfirmarTarjeta");
+const tarjetaConfirmadaMsg = document.getElementById("tarjeta-confirmada-msg");
+const tarjetaNumeroInput = document.getElementById("tarjeta-numero");
+const tarjetaTitularInput = document.getElementById("tarjeta-titular");
+const tarjetaVencimientoInput = document.getElementById("tarjeta-vencimiento");
+const tarjetaCvvInput = document.getElementById("tarjeta-cvv");
+
+let tarjetaConfirmada = false;
 
 const partido =
   JSON.parse(localStorage.getItem("partidoActual")) ||
@@ -63,6 +73,36 @@ function obtenerMetodoPagoSeleccionado() {
   return map[seleccionado.value] || null;
 }
 
+function validarDatosTarjeta() {
+  const numero = (tarjetaNumeroInput?.value || "").replace(/\s+/g, "");
+  const titular = (tarjetaTitularInput?.value || "").trim();
+  const vencimiento = (tarjetaVencimientoInput?.value || "").trim();
+  const cvv = (tarjetaCvvInput?.value || "").trim();
+
+  if (!/^\d{13,19}$/.test(numero)) {
+    return "Ingresá un número de tarjeta válido (13 a 19 dígitos).";
+  }
+
+  if (titular.length < 3) {
+    return "Ingresá el nombre del titular como figura en la tarjeta.";
+  }
+
+  if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(vencimiento)) {
+    return "Ingresá una fecha de vencimiento válida en formato MM/AA.";
+  }
+
+  if (!/^\d{3,4}$/.test(cvv)) {
+    return "Ingresá un CVV válido (3 o 4 dígitos).";
+  }
+
+  return null;
+}
+
+function resetConfirmacionTarjeta() {
+  tarjetaConfirmada = false;
+  if (tarjetaConfirmadaMsg) tarjetaConfirmadaMsg.classList.add("hidden");
+}
+
 function actualizarResumenYTotal() {
   if (!sectorSeleccionado) return;
 
@@ -102,6 +142,11 @@ async function crearCompraReal() {
   const metodoPago = obtenerMetodoPagoSeleccionado();
   if (!metodoPago) {
     mostrarToast("error", "Seleccioná un medio de pago válido (Tarjeta o Transferencia).");
+    return;
+  }
+
+  if (metodoPago === "Tarjeta" && !tarjetaConfirmada) {
+    mostrarToast("error", "Primero confirmá los datos de la tarjeta.");
     return;
   }
 
@@ -145,7 +190,8 @@ async function crearCompraReal() {
   try {
     btnContinuar.disabled = true;
 
-    const token = localStorage.getItem("jwt_token");
+    const token = localStorage.getItem("jwt_token", data.token);
+
     const response = await fetch(`${API_URL}/Compra/crear`, {
       method: "POST",
       headers: {
@@ -223,6 +269,9 @@ if (partido) {
 
 if (cantidadInput) {
   cantidadInput.addEventListener("input", () => {
+    const soloDigitos = (cantidadInput.value || "").replace(/[^\d]/g, "");
+    cantidadInput.value = soloDigitos;
+
     const cantidad = normalizarCantidad(cantidadInput.value);
     if (!cantidad && cantidadInput.value !== "") {
       if (cantidadError) cantidadError.textContent = "La cantidad debe estar entre 1 y 10.";
@@ -232,6 +281,39 @@ if (cantidadInput) {
     actualizarResumenYTotal();
   });
 }
+
+const mediosPagoInputs = document.querySelectorAll('input[name="medioPago"]');
+mediosPagoInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    const metodo = obtenerMetodoPagoSeleccionado();
+    const esTarjeta = metodo === "Tarjeta";
+
+    if (tarjetaForm) tarjetaForm.classList.toggle("hidden", !esTarjeta);
+
+    if (!esTarjeta) {
+      resetConfirmacionTarjeta();
+      if (tarjetaError) tarjetaError.textContent = "";
+    } else {
+      resetConfirmacionTarjeta();
+    }
+  });
+});
+
+btnConfirmarTarjeta?.addEventListener("click", () => {
+  const error = validarDatosTarjeta();
+  if (error) {
+    tarjetaConfirmada = false;
+    if (tarjetaError) tarjetaError.textContent = error;
+    if (tarjetaConfirmadaMsg) tarjetaConfirmadaMsg.classList.add("hidden");
+    mostrarToast("error", error);
+    return;
+  }
+
+  if (tarjetaError) tarjetaError.textContent = "";
+  tarjetaConfirmada = true;
+  if (tarjetaConfirmadaMsg) tarjetaConfirmadaMsg.classList.remove("hidden");
+  mostrarToast("success", "Tarjeta confirmada. Ahora podés confirmar la compra.");
+});
 
 actualizarResumenYTotal();
 
