@@ -41,6 +41,56 @@
           </label>
         </div>
 
+        <div id="tarjeta-form" class="tarjeta-form hidden">
+          <h4>Datos de la tarjeta</h4>
+
+          <label for="tarjeta-numero">Número de tarjeta</label>
+          <input
+            type="text"
+            id="tarjeta-numero"
+            placeholder="1234 5678 9012 3456"
+            maxlength="19"
+          />
+
+          <label for="tarjeta-titular">Titular</label>
+          <input
+            type="text"
+            id="tarjeta-titular"
+            placeholder="Nombre como figura en la tarjeta"
+          />
+
+          <div class="tarjeta-row">
+            <div>
+              <label for="tarjeta-vencimiento">Vencimiento (MM/AA)</label>
+              <input
+                type="text"
+                id="tarjeta-vencimiento"
+                placeholder="MM/AA"
+                maxlength="5"
+              />
+            </div>
+            <div>
+              <label for="tarjeta-cvv">CVV</label>
+              <input
+                type="text"
+                id="tarjeta-cvv"
+                placeholder="123"
+                maxlength="4"
+              />
+            </div>
+          </div>
+
+          <small id="tarjeta-error" class="input-error"></small>
+
+          <button type="button" id="btnConfirmarTarjeta" class="btn-gray">
+            Confirmar tarjeta
+          </button>
+
+          <p id="tarjeta-confirmada-msg" class="tarjeta-confirmada hidden">
+            ✓ Tarjeta confirmada. Ahora podés confirmar la compra.
+          </p>
+        </div>
+
         <p class="total-line">Total: <strong id="total">$0</strong></p>
 
         <button id="btnContinuar" class="primary-button">

@@ -158,6 +158,11 @@ function setupLoginFlow() {
           return;
         }
 
+        if (contrasena.length < 8) {
+          toast("error", "La contraseña debe tener al menos 8 caracteres.");
+          return;
+        }
+
         if (contrasena !== confirmPassword) {
           toast("error", "Las contraseñas no coinciden. Verificá e intentá nuevamente.");
           return;
@@ -287,7 +292,7 @@ if (btnModoLogin) {
 const btnForgotPassword = document.getElementById("btnForgotPassword");
 if (btnForgotPassword) {
   btnForgotPassword.addEventListener("click", () => {
-    // TODO: Integrar endpoint real de recuperación cuando esté disponible en backend.
+    // Integrar endpoint real de recuperación cuando esté disponible en backend.
     window.location.href = "recuperar-password.html";
   });
 }
