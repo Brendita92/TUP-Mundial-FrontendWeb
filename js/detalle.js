@@ -248,14 +248,20 @@ btnComprar.addEventListener("click", () => {
 
   localStorage.setItem("partidoPendiente", idPartido);
 
-  // Requerimiento actual: siempre pasar por login/registro luego de elegir sector.
- const token = localStorage.getItem("jwt_token");
-    if (token) {
-      // Ya logueado → ir directo a compra/pago
-      window.location.href = `compra.html?id=${idPartido}`;
-    } else {
-      // No logueado → pedir login
-      window.location.href = "login.html";
-    }
+  const token = localStorage.getItem("jwt_token");
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const usuarioId = localStorage.getItem("usuarioId");
+  const loginEnEsteFlujo = sessionStorage.getItem("flowLoggedIn") === "true";
+
+  const sesionValida = Boolean(token && isLoggedIn && usuarioId);
+
+  if (sesionValida && loginEnEsteFlujo) {
+    // Usuario ya autenticado en este flujo de navegación → ir directo a compra/pago
+    window.location.href = `compra.html?id=${idPartido}`;
+  } else {
+    // Primer ingreso del flujo o sesión inválida → forzar login/registro
+    sessionStorage.setItem("flowLoggedIn", "false");
+    window.location.href = "login.html";
+  }
 
 });

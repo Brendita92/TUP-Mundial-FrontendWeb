@@ -1,4 +1,8 @@
 const contenedor = document.getElementById("partidos");
+
+function textoNormalizado(valor) {
+  return normalizarNombreEquipo(valor || "");
+}
 const buscador = document.getElementById("buscador");
 const filtroFecha = document.getElementById("filtro-fecha");
 const filtroEquipo = document.getElementById("filtro-equipo");
@@ -33,6 +37,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
     mostrarPartidos(partidosGlobal, contenedor);
+    contenedor.classList.add("mostrar-todos");
 
     setTimeout(() => {
       cargarFechas();
@@ -53,19 +58,28 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   buscador.addEventListener("input", aplicarFiltros);
   filtroFecha.addEventListener("change", aplicarFiltros);
-  filtroEquipo.addEventListener("change", aplicarFiltros);
+  filtroEquipo.addEventListener("change", () => {
+    if (!filtroEquipo.value) {
+      // "Todos los equipos" debe resetear toda la combinación de filtros
+      seleccionSeleccionada = "";
+      torneoSeleccionado = "";
+      faseSeleccionada = "";
+      estadioSeleccionado = "";
+      if (filtroFecha) filtroFecha.value = "";
+      if (buscador) buscador.value = "";
+    }
+    aplicarFiltros();
+  });
 
 });
 
 function cargarFiltroEquipos() {
+  filtroEquipo.innerHTML = '<option value="">Todos los equipos</option>';
 
   obtenerEquiposParaFiltro().forEach(({ codigo, nombre }) => {
-
     const option = document.createElement("option");
-
     option.value = codigo;
     option.textContent = nombre;
-
     filtroEquipo.appendChild(option);
   });
 }
@@ -248,32 +262,72 @@ function cargarSelecciones() {
 }
 
 
+function extraerCodigoEquipo(valor) {
+  if (!valor) return null;
+
+  const texto = String(valor).trim();
+
+  const matchParentesis = texto.match(/\(([A-Za-z]{3})\)/);
+  if (matchParentesis) return matchParentesis[1].toUpperCase();
+
+  const matchCodigoSuelto = texto.match(/\b([A-Za-z]{3})\b/);
+  if (matchCodigoSuelto) return matchCodigoSuelto[1].toUpperCase();
+
+  return obtenerCodigoEquipo(texto);
+}
+
 function aplicarFiltros() {
 
-  const texto = buscador.value.toLowerCase();
+  const texto = normalizarNombreEquipo(buscador.value || "");
   const fechaSeleccionada = filtroFecha.value;
   const equipoSeleccionado = filtroEquipo.value;
+
+  if (
+    !texto &&
+    !fechaSeleccionada &&
+    !equipoSeleccionado &&
+    !torneoSeleccionado &&
+    !faseSeleccionada &&
+    !estadioSeleccionado &&
+    !seleccionSeleccionada
+  ) {
+    contenedor.classList.add("mostrar-todos");
+    mostrarPartidos(partidosGlobal, contenedor);
+    return;
+  }
+
+  contenedor.classList.remove("mostrar-todos");
  
   const filtrados = partidosGlobal.filter(p => {
 
+    const nombrePartidoNormalizado = normalizarNombreEquipo(nombrePartido(p));
+    const estadioNormalizado = normalizarNombreEquipo(p.estadio ?? "");
+
     const coincideBuscador =
-      nombrePartido(p).toLowerCase().includes(texto) ||
-      (p.estadio ?? "").toLowerCase().includes(texto);
+      !texto ||
+      nombrePartidoNormalizado.includes(texto) ||
+      estadioNormalizado.includes(texto);
 
     const coincideFecha =
       !fechaSeleccionada ||
       p.fecha === fechaSeleccionada;
 
-    const codigoLocal =
-      obtenerCodigoEquipo(p.local);
+    const codigoLocal = extraerCodigoEquipo(p.local);
+    const codigoVisitante = extraerCodigoEquipo(p.visitante);
 
-    const codigoVisitante =
-      obtenerCodigoEquipo(p.visitante);
+    const nombreLocalNormalizado = normalizarNombreEquipo(p.local || "");
+    const nombreVisitanteNormalizado = normalizarNombreEquipo(p.visitante || "");
+    const nombreEquipoSeleccionado = normalizarNombreEquipo(
+      CODIGOS_EQUIPOS[equipoSeleccionado] || ""
+    );
 
     const coincideEquipo =
       !equipoSeleccionado ||
       codigoLocal === equipoSeleccionado ||
-      codigoVisitante === equipoSeleccionado;
+      codigoVisitante === equipoSeleccionado ||
+      (nombreEquipoSeleccionado &&
+        (nombreLocalNormalizado.includes(nombreEquipoSeleccionado) ||
+          nombreVisitanteNormalizado.includes(nombreEquipoSeleccionado)));
 
       const coincideTorneo =
   !torneoSeleccionado ||
@@ -285,12 +339,21 @@ const coincideFase =
 
 const coincideEstadio =
   !estadioSeleccionado ||
-  p.estadio === estadioSeleccionado;
+  textoNormalizado(p.estadio) === textoNormalizado(estadioSeleccionado);
+
+const codigoSeleccionSidebar = extraerCodigoEquipo(seleccionSeleccionada);
+const codigoLocalSidebar = extraerCodigoEquipo(p.local);
+const codigoVisitanteSidebar = extraerCodigoEquipo(p.visitante);
 
 const coincideSeleccion =
   !seleccionSeleccionada ||
-  p.local === seleccionSeleccionada ||
-  p.visitante === seleccionSeleccionada;
+  textoNormalizado(p.local).includes(textoNormalizado(seleccionSeleccionada)) ||
+  textoNormalizado(p.visitante).includes(textoNormalizado(seleccionSeleccionada)) ||
+  textoNormalizado(seleccionSeleccionada).includes(textoNormalizado(p.local)) ||
+  textoNormalizado(seleccionSeleccionada).includes(textoNormalizado(p.visitante)) ||
+  (codigoSeleccionSidebar &&
+    (codigoLocalSidebar === codigoSeleccionSidebar ||
+      codigoVisitanteSidebar === codigoSeleccionSidebar));
 
   return (
   coincideBuscador &&
@@ -305,5 +368,6 @@ const coincideSeleccion =
   });
 
   mostrarPartidos(filtrados, contenedor);
+  contenedor.classList.remove("mostrar-todos");
 
 }

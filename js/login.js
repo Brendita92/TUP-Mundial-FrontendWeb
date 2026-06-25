@@ -192,6 +192,7 @@ function setupLoginFlow() {
 
       await authLogin({ mail, contrasena });
       localStorage.setItem("isLoggedIn", "true");
+      sessionStorage.setItem("flowLoggedIn", "true");
       toast("success", "✓ Inicio de sesión exitoso");
 
       const partidoId = localStorage.getItem("partidoPendiente");
