@@ -192,6 +192,14 @@ async function initTicket() {
   }
 }
 
+function salirDeLaSesion() {
+  localStorage.clear();
+  sessionStorage.removeItem("flowLoggedIn");
+  window.location.href = "index.html";
+}
+
+window.salirDeLaSesion = salirDeLaSesion;
+
 initTicket();
 
 localStorage.removeItem("partidoPendiente");

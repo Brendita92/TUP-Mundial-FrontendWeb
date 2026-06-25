@@ -190,7 +190,7 @@ async function crearCompraReal() {
   try {
     btnContinuar.disabled = true;
 
-    const token = localStorage.getItem("jwt_token", data.token);
+    const token = localStorage.getItem("jwt_token");
 
     const response = await fetch(`${API_URL}/Compra/crear`, {
       method: "POST",

@@ -133,11 +133,13 @@ const ALIAS_EQUIPOS = {
 const LOGO_FALLBACK = "img/flags/logo-mundial-2026-v3.svg";
 
 function normalizarNombreEquipo(nombre) {
-  return nombre
+  return String(nombre || "")
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\./g, "")
+    .replace(/\s+/g, " ");
 }
 
 function obtenerCodigoEquipo(nombre) {
